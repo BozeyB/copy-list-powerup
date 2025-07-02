@@ -7,19 +7,24 @@
     <script src="/popup.js"></script>
     <style>
       body {
-        font-family: 'Segoe UI', sans-serif;
+        font-family: "Segoe UI", sans-serif;
         padding: 16px;
         font-size: 14px;
         line-height: 1.5;
+        background-color: #ffffff;
+        color: #222222;
+        max-width: 580px;
+        margin: 0 auto;
       }
 
       h3 {
         margin-top: 0;
         font-size: 18px;
+        color: #2c3e50;
       }
 
       h4 {
-        margin: 16px 0 6px;
+        margin: 20px 0 6px;
         font-size: 16px;
         color: #2c3e50;
         border-top: 1px solid #ccc;
@@ -32,17 +37,34 @@
         gap: 8px;
         margin: 2px 0;
         padding-left: 4px;
+        color: #333;
       }
 
       #copyForm {
         margin-top: 12px;
       }
 
-      select, button {
+      select,
+      button {
         width: 100%;
         padding: 8px;
         margin-bottom: 12px;
         font-size: 14px;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+        background: #fff;
+        color: #222;
+      }
+
+      button {
+        background-color: #0079bf;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #026aa7;
       }
 
       #targetLists {
@@ -51,7 +73,7 @@
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 6px;
-        background-color: #f9f9f9;
+        background-color: #f4f5f7;
       }
 
       #status {
@@ -71,11 +93,22 @@
       <label for="sourceList">Source List (this board):</label>
       <select id="sourceList"></select>
 
-      <label style="margin-top: 12px;">Target Lists:</label>
+      <label>Copy Options:</label>
+      <label
+        ><input type="radio" name="copyMode" value="existing" checked /> Copy to
+        existing lists</label
+      >
+      <label
+        ><input type="radio" name="copyMode" value="new" /> Create new list in
+        selected boards</label
+      >
+
       <div id="targetLists"></div>
+      <div id="targetBoards" style="display: none"></div>
 
       <button type="submit">Copy Cards</button>
     </form>
+
     <div id="status"></div>
   </body>
 </html>
