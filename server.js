@@ -44,6 +44,14 @@ app.get("/copy-list", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Power-Up server is running on port 3000");
+const listener = app.listen(process.env.PORT || 3000, function () {
+  console.log("Power-Up server is running on port " + listener.address().port);
 });
+const path = require("path");
+
+// ... keep your existing code ...
+
+app.get("/manifest.json", (req, res) => {
+  res.sendFile(path.join(__dirname, "manifest.json"));
+});
+

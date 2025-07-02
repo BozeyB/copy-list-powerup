@@ -2,11 +2,27 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Copy List Power-Up</title>
+    <title>Copy List</title>
     <script src="https://p.trellocdn.com/power-up.min.js"></script>
     <script src="/client.js"></script>
+    <style>
+      body { font-family: sans-serif; padding: 20px; }
+      label { display: block; margin-top: 12px; }
+      select, input { width: 100%; padding: 6px; margin-top: 4px; }
+      button { margin-top: 20px; padding: 10px 20px; }
+    </style>
   </head>
   <body>
-    <h3>List Copier</h3>
+    <h3>Copy List to Another Board</h3>
+    <form id="copyForm">
+      <label for="sourceList">Select Source List:</label>
+      <select id="sourceList"></select>
+
+      <label for="targetListId">Target List ID (paste from other board):</label>
+      <input type="text" id="targetListId" placeholder="Enter target list ID" required />
+
+      <button type="submit">Copy Cards</button>
+    </form>
+    <div id="status"></div>
   </body>
 </html>
