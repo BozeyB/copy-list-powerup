@@ -3,7 +3,7 @@ function showCopyListPopup(t) {
     title: "Copy List to Multiple Boards",
     url: "./popup.html",
     height: 600,
-    width: 600 // NEW: wider layout
+    width: 600
   });
 }
 
