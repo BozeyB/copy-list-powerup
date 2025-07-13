@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Authenticating...</title>
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+  </head>
+  <body>
+    <p>Authorizing with Trello...</p>
+    <script>
+      window.TrelloPowerUp.authorize({
+        scope: {
+          read: true,
+          write: true
+        },
+        expiration: 'never',
+        name: 'Copy List to Multiple Boards',
+        return_url: './close.html'
+      });
+    </script>
+  </body>
+</html>
