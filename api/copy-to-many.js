@@ -29,6 +29,7 @@ export default async function handler(req, res) {
 
     res.status(200).send("Cards copied successfully.");
   } catch (err) {
+    
     console.error(err);
     res.status(500).send("Error copying cards.");
   }
