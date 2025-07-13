@@ -12,3 +12,14 @@ export default function handler(req, res) {
     </html>
   `);
 }
+app.get('/auth/callback', async (req, res) => {
+  const secret = req.query.secret;
+
+  if (!secret) {
+    return res.status(400).send('Missing secret');
+  }
+
+  // You could validate the secret or use it to get a Trello token
+
+  return res.send('Authorization complete. You can close this window.');
+});
