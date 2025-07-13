@@ -24,12 +24,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     opt.textContent = list.name;
     sourceListSelect.appendChild(opt);
   });
-
-  apiKey = process.env.TRELLO_API_KEY;
-  token = process.env.TRELLO_API_TOKEN;
  
   try {
-    const res = await fetch(`https://copy-list-powerup.vercel.app/api/user-boards?apiKey=${apiKey}&token=${token}`);
+    const res = await fetch(`https://copy-list-powerup.vercel.app/api/user-boards?apiKey=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_API_TOKEN}`);
     const boards = await res.json();
 
     boards.forEach(board => {
