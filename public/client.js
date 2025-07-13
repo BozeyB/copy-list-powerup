@@ -1,3 +1,5 @@
+const TrelloPowerUp = window.TrelloPowerUp;
+
 function showCopyListPopup(t) {
   return t.popup({
     title: "Copy List to Multiple Boards",
@@ -7,17 +9,17 @@ function showCopyListPopup(t) {
   });
 }
 
-window.TrelloPowerUp.initialize({
+TrelloPowerUp.initialize({
 
-  // Board button
-  'board-buttons': function (t, options) {
+  // Board button that checks authorization first
+  'board-buttons': function (t) {
     return [
       {
         icon: "https://cdn-icons-png.flaticon.com/512/1828/1828859.png",
         text: "Copy List",
-        callback: function(t) {
+        callback: function (t) {
           return t.get('member', 'private', 'authToken')
-            .then(function(token) {
+            .then(function (token) {
               if (token) {
                 return showCopyListPopup(t);
               } else {
@@ -32,22 +34,30 @@ window.TrelloPowerUp.initialize({
       }
     ];
   },
-  'on-enable': function (t, opts) {
-    // Trello fires this once when the Power-Up is enabled.
-    // We don’t need to do anything, just resolve.
+
+  // Trello calls this when Power-Up is enabled on a board
+  'on-enable': function (t) {
     return Promise.resolve();
   },
+
+  // Trello calls this when Power-Up is removed from a board
   'on-disable': function (t) {
-  return Promise.resolve(); // No action needed when Power-Up is disabled
-},
-  // Required by Trello to support OAuth
-  'authorization-status': function (t, options) {
+    return Promise.resolve();
+  },
+
+  // Required for OAuth: tells Trello if the user is authorized
+  'authorization-status': function (t) {
     return t.get('member', 'private', 'authToken')
-      .then(function(token) {
-        return { authorized: !!token };
+      .then(function (token) {
+        if (token) {
+          return t.authorized(); // Use t.authorized() instead of manually returning object
+        } else {
+          return t.notAuthorized(); // Likewise, use t.notAuthorized()
+        }
       });
   },
 
+  // Required for OAuth: tells Trello how to show the authorization UI
   'show-authorization': function (t) {
     return t.popup({
       title: "Authorize This Power-Up",
