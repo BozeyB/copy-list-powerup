@@ -8,7 +8,6 @@ function showCopyListPopup(t) {
 }
 
 window.TrelloPowerUp.initialize({
-  
 
   // Board button
   'board-buttons': function (t, options) {
@@ -33,7 +32,14 @@ window.TrelloPowerUp.initialize({
       }
     ];
   },
-
+  'on-enable': function (t, opts) {
+    // Trello fires this once when the Power-Up is enabled.
+    // We don’t need to do anything, just resolve.
+    return Promise.resolve();
+  },
+  'on-disable': function (t) {
+  return Promise.resolve(); // No action needed when Power-Up is disabled
+},
   // Required by Trello to support OAuth
   'authorization-status': function (t) {
     return t.get('member', 'private', 'authToken')
