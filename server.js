@@ -41,7 +41,6 @@ app.get("/user-boards", async (req, res) => {
 
     res.json(results);
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error fetching boards/lists");
   }
 });
@@ -154,7 +153,6 @@ app.post("/copy-to-many", async (req, res) => {
 
     res.send("Cards copied to all target lists.");
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error copying cards.");
   }
 });
@@ -195,11 +193,9 @@ app.post("/copy-to-new-lists", async (req, res) => {
 
     res.send("New lists created and cards copied.");
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error creating new lists or copying cards.");
   }
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log("Server running on port " + listener.address().port);
 });

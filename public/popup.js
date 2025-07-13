@@ -16,20 +16,28 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   });
 
-  const sourceLists = await t.lists("id", "name");
-  sourceLists.forEach(list => {
-    const opt = document.createElement("option");
-    opt.value = list.id;
-    opt.textContent = list.name;
-    sourceListSelect.appendChild(opt);
-  });
-
+  // Load source list dropdown
   try {
-    const res = await fetch("/user-boards");
+    const sourceLists = await t.lists("id", "name");
+    sourceLists.forEach(list => {
+      const opt = document.createElement("option");
+      opt.value = list.id;
+      opt.textContent = list.name;
+      sourceListSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error loading source lists", err);
+    statusDiv.textContent = "Failed to load source lists.";
+    return;
+  }
+
+  // Load available boards and lists from backend
+  try {
+    const res = await fetch("/api/user-boards");
     const boards = await res.json();
 
     boards.forEach(board => {
-      // Target lists (existing)
+      // Existing Lists UI
       const boardLabel = document.createElement("h4");
       boardLabel.textContent = board.boardName;
       targetListsDiv.appendChild(boardLabel);
@@ -45,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         targetListsDiv.appendChild(label);
       });
 
-      // Target boards (new)
+      // New List UI
       const boardBoxLabel = document.createElement("label");
       const boardCheckbox = document.createElement("input");
       boardCheckbox.type = "checkbox";
@@ -56,10 +64,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       targetBoardsDiv.appendChild(boardBoxLabel);
     });
   } catch (err) {
-    console.error("Error loading target lists", err);
+    console.error("Error loading boards/lists", err);
     statusDiv.textContent = "Could not load target boards/lists.";
   }
 
+  // Handle form submission
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     statusDiv.textContent = "Copying cards...";
@@ -67,39 +76,46 @@ document.addEventListener("DOMContentLoaded", async function () {
     const sourceListId = sourceListSelect.value;
     const copyMode = document.querySelector("input[name='copyMode']:checked").value;
 
-    if (copyMode === "existing") {
-      const checkboxes = document.querySelectorAll("input[name='targetList']:checked");
-      const targetListIds = Array.from(checkboxes).map(cb => cb.value);
+    try {
+      if (copyMode === "existing") {
+        const checkboxes = document.querySelectorAll("input[name='targetList']:checked");
+        const targetListIds = Array.from(checkboxes).map(cb => cb.value);
 
-      if (!targetListIds.length) {
-        statusDiv.textContent = "Select at least one target list.";
-        return;
+        if (!targetListIds.length) {
+          statusDiv.textContent = "Select at least one target list.";
+          return;
+        }
+
+        const res = await fetch("/api/copy-to-many", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sourceListId, targetListIds })
+        });
+
+        const msg = await res.text();
+        statusDiv.textContent = msg;
+
+      } else {
+        const checkboxes = document.querySelectorAll("input[name='targetBoard']:checked");
+        const targetBoardIds = Array.from(checkboxes).map(cb => cb.value);
+
+        if (!targetBoardIds.length) {
+          statusDiv.textContent = "Select at least one board.";
+          return;
+        }
+
+        const res = await fetch("/api/copy-to-new-lists", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sourceListId, targetBoardIds })
+        });
+
+        const msg = await res.text();
+        statusDiv.textContent = msg;
       }
-
-      const res = await fetch("/copy-to-many", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sourceListId, targetListIds })
-      });
-      const msg = await res.text();
-      statusDiv.textContent = msg;
-
-    } else {
-      const checkboxes = document.querySelectorAll("input[name='targetBoard']:checked");
-      const targetBoardIds = Array.from(checkboxes).map(cb => cb.value);
-
-      if (!targetBoardIds.length) {
-        statusDiv.textContent = "Select at least one board.";
-        return;
-      }
-
-      const res = await fetch("/copy-to-new-lists", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sourceListId, targetBoardIds })
-      });
-      const msg = await res.text();
-      statusDiv.textContent = msg;
+    } catch (err) {
+      console.error("Error submitting copy request", err);
+      statusDiv.textContent = "An error occurred. See console for details.";
     }
   });
 });
