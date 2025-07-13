@@ -1,6 +1,4 @@
-const t = TrelloPowerUp.iframe();
-
-t.authorize({
+TrelloPowerUp.authorize({
   type: 'popup',
   persist: true,
   interactive: true,
@@ -9,10 +7,10 @@ t.authorize({
     write: true
   },
   expiration: 'never',
-  name: 'Copy List to Multiple Boards',
+  name: 'Copy List to Multiple Boards'
 })
 .then(() => {
-  t.closePopup();
+  window.close(); // or redirect to a "success" page
 })
 .catch((err) => {
   console.error("Authorization failed:", err);
