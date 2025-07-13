@@ -8,6 +8,7 @@ function showCopyListPopup(t) {
 }
 
 window.TrelloPowerUp.initialize({
+  
 
   // Board button
   'board-buttons': function (t, options) {
@@ -48,5 +49,4 @@ window.TrelloPowerUp.initialize({
       height: 140
     });
   }
-
 });
