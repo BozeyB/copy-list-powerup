@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Configure Trello API</title>
+  <script src="https://p.trellocdn.com/power-up.min.js"></script>
+</head>
+<body>
+  <h3>Configure Trello API</h3>
+  <form id="configForm">
+    <label>
+      Trello API Key:
+      <input type="text" id="apiKey" required />
+    </label>
+    <br><br>
+    <label>
+      Trello Token:
+      <input type="text" id="token" required />
+    </label>
+    <br><br>
+    <button type="submit">Save</button>
+  </form>
+
+  <script>
+    const t = TrelloPowerUp.iframe();
+
+    document.getElementById("configForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const apiKey = document.getElementById("apiKey").value;
+      const token = document.getElementById("token").value;
+
+      await t.set('board', 'shared', { trelloApiKey: apiKey, trelloToken: token });
+      t.closePopup();
+    });
+  </script>
+</body>
+</html>
