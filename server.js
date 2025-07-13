@@ -10,20 +10,23 @@ app.use(cors());
 app.use(express.json());
 app.use(helmet());
 
-// CSP & HSTS (Required by Trello)
+// CSP & HSTS headers required by Trello
 app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' https://*.trello.com; frame-ancestors https://*.trello.com;");
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' https://*.trello.com https://p.trellocdn.com; frame-ancestors https://*.trello.com;"
+  );
   res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
   next();
 });
 
-// Serve frontend files
+// Serve static frontend
 app.use(express.static("public"));
 
 const API_BASE = "https://api.trello.com/1";
 const { TRELLO_KEY, TRELLO_TOKEN } = process.env;
 
-// Helper to copy card with labels, due date, checklists
+// Copy card helper with metadata
 async function copyCard(card, targetListId) {
   const cardRes = await axios.post(`${API_BASE}/cards`, null, {
     params: {
@@ -40,7 +43,6 @@ async function copyCard(card, targetListId) {
 
   const newCard = cardRes.data;
 
-  // Copy checklists
   const checklistsRes = await axios.get(`${API_BASE}/cards/${card.id}/checklists`, {
     params: { key: TRELLO_KEY, token: TRELLO_TOKEN }
   });
@@ -71,8 +73,8 @@ async function copyCard(card, targetListId) {
   return newCard;
 }
 
-// 🟩 Copy to multiple existing lists
-app.post("/copy-to-many", async (req, res) => {
+// Route: copy to existing lists
+app.post("/api/copy-to-many", async (req, res) => {
   const { sourceListId, targetListIds } = req.body;
   try {
     const cardRes = await axios.get(`${API_BASE}/lists/${sourceListId}/cards`, {
@@ -93,8 +95,8 @@ app.post("/copy-to-many", async (req, res) => {
   }
 });
 
-// 🟩 Copy to new list in each selected board
-app.post("/copy-to-new-lists", async (req, res) => {
+// Route: copy to new lists
+app.post("/api/copy-to-new-lists", async (req, res) => {
   const { sourceListId, targetBoardIds } = req.body;
   try {
     const sourceList = await axios.get(`${API_BASE}/lists/${sourceListId}`, {
@@ -130,13 +132,9 @@ app.post("/copy-to-new-lists", async (req, res) => {
     res.status(500).send("Error copying to new lists.");
   }
 });
-app.get('/auth/callback', (req, res) => {
-  res.send('Authorization complete. You can close this window.');
-});
 
-
-// 🟩 Fetch all boards and lists
-app.get("/user-boards", async (req, res) => {
+// Route: return available boards/lists
+app.get("/api/user-boards", async (req, res) => {
   try {
     const boardsRes = await axios.get(`${API_BASE}/members/me/boards`, {
       params: {
@@ -165,6 +163,11 @@ app.get("/user-boards", async (req, res) => {
   } catch (err) {
     res.status(500).send("Error loading user boards.");
   }
+});
+
+// Route: Trello OAuth callback
+app.get("/auth/callback", (req, res) => {
+  res.send("Authorization complete. You can close this window.");
 });
 
 // Start server
