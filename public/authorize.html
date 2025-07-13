@@ -1,11 +1,31 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8" />
     <title>Authorize Power-Up</title>
-    <meta charset="UTF-8" />
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
   </head>
   <body>
-    <h3>Authorizing...</h3>
-    <script src="authorize.js"></script>
+    <h2>Authorize This Power-Up</h2>
+    <button id="authorize-btn">Authorize Trello Access</button>
+
+    <script>
+      const t = TrelloPowerUp.iframe();
+
+      document.getElementById("authorize-btn").addEventListener("click", function () {
+        const returnUrl = window.location.origin + "/auth/callback";
+
+        const authUrl = `https://trello.com/1/authorize?${new URLSearchParams({
+          expiration: "never",
+          name: "Copy List Power-Up",
+          scope: "read,write",
+          response_type: "token",
+          key: "520e82365244fbc355d6b7941e1495b8", // REPLACE THIS WITH YOUR ACTUAL KEY
+          return_url: returnUrl
+        })}`;
+
+        window.location.href = authUrl;
+      });
+    </script>
   </body>
 </html>
