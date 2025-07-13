@@ -1,17 +1,21 @@
-TrelloPowerUp.authorize({
+// This uses the correct Trello client library method
+Trello.authorize({
   type: 'popup',
-  persist: true,
-  interactive: true,
+  name: 'Copy List to Multiple Boards',
   scope: {
     read: true,
     write: true
   },
   expiration: 'never',
-  name: 'Copy List to Multiple Boards'
-})
-.then(() => {
-  window.close(); // or redirect to a "success" page
-})
-.catch((err) => {
-  console.error("Authorization failed:", err);
+  persist: true,
+  success: function () {
+    const token = Trello.token();
+    const t = window.TrelloPowerUp.iframe();
+    t.set('member', 'private', 'authToken', token).then(() => {
+      window.close(); // Close the popup after success
+    });
+  },
+  error: function () {
+    alert('Authorization failed. Please try again.');
+  }
 });
