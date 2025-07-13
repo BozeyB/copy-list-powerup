@@ -1,0 +1,1 @@
+callback.html (or you can make /auth/callback an API route)
