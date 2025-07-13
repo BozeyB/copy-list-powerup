@@ -41,7 +41,7 @@ window.TrelloPowerUp.initialize({
   return Promise.resolve(); // No action needed when Power-Up is disabled
 },
   // Required by Trello to support OAuth
-  'authorization-status': function (t) {
+  'authorization-status': function (t, options) {
     return t.get('member', 'private', 'authToken')
       .then(function(token) {
         return { authorized: !!token };
