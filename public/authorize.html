@@ -1,21 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <title>Authorize Trello Access</title>
+    <title>Authorize</title>
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+    <script defer src="/authorize.js"></script>
   </head>
   <body>
-    <h2>Authorize Trello Access</h2>
-    <button id="auth-btn">Authorize</button>
-
-    <script>
-      const TRELLO_API_KEY = "520e82365244fbc355d6b7941e1495b8"; // REPLACE THIS
-      const RETURN_URL = "https://copy-list-powerup.vercel.app/authorized.html";
-
-      document.getElementById("auth-btn").addEventListener("click", function () {
-        const authUrl = `https://trello.com/1/authorize?expiration=never&name=Copy%20List%20Power-Up&scope=read,write&response_type=token&key=${TRELLO_API_KEY}&return_url=${encodeURIComponent(RETURN_URL)}`;
-        window.location.href = authUrl;
-      });
-    </script>
+    <h3>Authorizing...</h3>
   </body>
 </html>
