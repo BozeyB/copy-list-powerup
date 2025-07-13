@@ -1,4 +1,3 @@
-// This uses the correct Trello client library method
 Trello.authorize({
   type: 'popup',
   name: 'Copy List to Multiple Boards',
@@ -10,12 +9,12 @@ Trello.authorize({
   persist: true,
   success: function () {
     const token = Trello.token();
-    const t = window.TrelloPowerUp.iframe();
+    const t = TrelloPowerUp.iframe();
     t.set('member', 'private', 'authToken', token).then(() => {
-      window.close(); // Close the popup after success
+      window.close();
     });
   },
   error: function () {
-    alert('Authorization failed. Please try again.');
+    alert("Authorization failed.");
   }
 });

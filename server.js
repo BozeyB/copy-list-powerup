@@ -29,10 +29,8 @@ app.get("/api/get-request-token", async (req, res) => {
 
 // CSP & HSTS headers required by Trello
 app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' https://*.trello.com https://p.trellocdn.com; frame-ancestors https://*.trello.com;"
-  );
+  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' https://*.trello.com https://trello.com https://p.trellocdn.com; frame-ancestors https://*.trello.com;");
+
   res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
   next();
 });
