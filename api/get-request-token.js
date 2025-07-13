@@ -1,36 +1,51 @@
-import oauthSignature from "oauth-signature";
+import oauthSignature from 'oauth-signature';
+import crypto from 'crypto';
+import fetch from 'node-fetch';
+
+const TRELLO_API_KEY = process.env.TRELLO_API_KEY;
+const TRELLO_API_SECRET = process.env.TRELLO_API_SECRET;
+const CALLBACK_URL = 'https://copy-list-powerup.vercel.app/api/oauth-callback';
 
 export default async function handler(req, res) {
   const oauth = {
-    callback: "https://copy-list-powerup.vercel.app/authorized.html",
-    consumer_key: process.env.TRELLO_API_KEY,
-    consumer_secret: process.env.TRELLO_API_SECRET,
-    signature_method: "HMAC-SHA1",
-    timestamp: Math.floor(Date.now() / 1000),
-    nonce: Math.random().toString(36).substring(2)
+    oauth_callback: CALLBACK_URL,
+    oauth_consumer_key: TRELLO_API_KEY,
+    oauth_nonce: crypto.randomBytes(16).toString('hex'),
+    oauth_timestamp: Math.floor(Date.now() / 1000),
+    oauth_signature_method: 'HMAC-SHA1',
+    oauth_version: '1.0',
   };
 
-  const url = "https://trello.com/1/OAuthGetRequestToken";
+  const signature = oauthSignature.generate(
+    'POST',
+    'https://trello.com/1/OAuthGetRequestToken',
+    oauth,
+    TRELLO_API_SECRET
+  );
 
-  const params = {
-    oauth_callback: oauth.callback,
-    oauth_consumer_key: oauth.consumer_key,
-    oauth_nonce: oauth.nonce,
-    oauth_signature_method: oauth.signature_method,
-    oauth_timestamp: oauth.timestamp,
-    oauth_version: "1.0"
-  };
-
-  const signature = oauthSignature.generate("GET", url, params, process.env.TRELLO_API_SECRET);
-  const query = new URLSearchParams({ ...params, oauth_signature: signature }).toString();
+  const authHeader = `OAuth ${Object.entries({
+    ...oauth,
+    oauth_signature: signature
+  }).map(([k, v]) => `${k}="${encodeURIComponent(v)}"`).join(', ')}`;
 
   try {
-    const trelloRes = await fetch(`${url}?${query}`);
-    const text = await trelloRes.text();
+    const response = await fetch('https://trello.com/1/OAuthGetRequestToken', {
+      method: 'POST',
+      headers: {
+        Authorization: authHeader,
+      }
+    });
 
-    const result = Object.fromEntries(new URLSearchParams(text));
-    res.status(200).json(result);
+    const text = await response.text();
+
+    if (!response.ok) {
+      console.error("Failed Trello OAuth response:", text);
+      return res.status(response.status).json({ error: text });
+    }
+
+    res.status(200).json({ raw: text });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch request token", detail: err.message });
+    console.error("OAuth request failed:", err);
+    res.status(500).json({ error: err.message });
   }
 }
