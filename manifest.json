@@ -2,34 +2,26 @@
   "manifest_version": 1,
   "name": "Copy List to Multiple Boards",
   "description": "Select a list and copy it to multiple boards at once. Supports tags, checklists, due dates, and more.",
+  "permissions": ["read", "write"],
   "author": "Hunter Boze",
   "version": "1.0.0",
-  "icon": {
-    "url": "https://copy-list-powerup.vercel.app/imgs/icon@128.png",
-    "width": 128,
-    "height": 128
+  "icons": {
+    "128": "imgs/icon@128.png"
   },
-  "capabilities": {
-    "board-buttons": {
-      "url": "./client.js"
-    },
-    "show-authorization": {
-      "url": "./authorize.html"
-    }
+  "iframeConnectorUrl": "https://copy-list-powerup.vercel.app",
+  "homepage": "https://copy-list-powerup.vercel.app",
+  "authorization-status": {
+    "enabled": true,
+    "url": "https://copy-list-powerup.vercel.app/authorize.html"
   },
-  "connectors": {
-    "iframe": {
-      "url": "https://copy-list-powerup.vercel.app"
-    }
+  "show-authorization": {
+    "url": "https://copy-list-powerup.vercel.app/authorize.html"
   },
-  "authorization": {
-    "type": "oauth1",
-    "oauth1": {
-      "callbackUrl": "https://copy-list-powerup.vercel.app/api/auth/callback"
-    }
+  "board-buttons": {
+    "url": "https://copy-list-powerup.vercel.app/client.js",
+    "capabilities": ["board-buttons"]
   },
-  "privacyPolicyUrl": "https://copy-list-powerup.vercel.app/privacy.html",
-  "validDomains": [
+  "valid-domains": [
     "copy-list-powerup.vercel.app"
   ]
 }

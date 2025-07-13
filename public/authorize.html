@@ -1,33 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Authorize Copy List Power-Up</title>
-  <script src="https://trello.com/1/client.js?key=TRELLO_API_KEY=520e82365244fbc355d6b7941e1495b8"></script>
-  <script src="https://p.trellocdn.com/power-up.min.js"></script>
-</head>
-<body>
-  <h3>Authorizing...</h3>
-  <script>
-    var t = TrelloPowerUp.iframe();
-
-    window.Trello.authorize({
-      type: 'popup',
-      name: 'Copy List Power-Up',
-      scope: {
-        read: true,
-        write: true
-      },
-      expiration: 'never',
-      success: function() {
-        t.set('member', 'private', 'trello_token', Trello.token())
-          .then(() => t.closePopup());
-      },
-      error: function() {
-        alert('Failed to authorize Trello');
-        t.closePopup();
-      }
-    });
-  </script>
-</body>
+  <head>
+    <title>Authorize This Power-Up</title>
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+    <script defer src="/authorize.js"></script>
+  </head>
+  <body>
+    <p>Authorizing with Trello...</p>
+  </body>
 </html>
