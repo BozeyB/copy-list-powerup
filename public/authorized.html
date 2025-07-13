@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Authorized</title>
+  </head>
+  <body>
+    <h2>You're authorized!</h2>
+    <script>
+      // Extract token from URL
+      const token = window.location.hash.match(/token=([0-9a-f]+)/)?.[1];
+
+      if (token) {
+        localStorage.setItem("trello_token", token);
+        document.body.innerHTML += `<p>Token saved! You may now return to Trello Power-Up.</p>`;
+      } else {
+        document.body.innerHTML += `<p>Failed to retrieve token.</p>`;
+      }
+    </script>
+  </body>
+</html>

@@ -10,6 +10,23 @@ app.use(cors());
 app.use(express.json());
 app.use(helmet());
 
+app.get("/api/get-request-token", async (req, res) => {
+  try {
+    const response = await axios.post("https://trello.com/1/OAuthGetRequestToken", null, {
+      params: {
+        oauth_callback: "http://localhost:3000/api/authorize-callback",
+        key: process.env.TRELLO_KEY,
+        secret: process.env.TRELLO_SECRET
+      }
+    });
+
+    const tokenParts = new URLSearchParams(response.data);
+    res.json({ oauth_token: tokenParts.get("oauth_token") });
+  } catch (err) {
+    res.status(500).send("Error getting request token");
+  }
+});
+
 // CSP & HSTS headers required by Trello
 app.use((req, res, next) => {
   res.setHeader(
@@ -169,7 +186,26 @@ app.get("/api/user-boards", async (req, res) => {
 app.get("/auth/callback", (req, res) => {
   res.send("Authorization complete. You can close this window.");
 });
+// Step 4: Callback to exchange request token for access token
+app.get("/api/authorize-callback", async (req, res) => {
+  const { oauth_token, oauth_verifier } = req.query;
+  try {
+    const response = await axios.post("https://trello.com/1/OAuthGetAccessToken", null, {
+      params: {
+        oauth_token,
+        oauth_verifier,
+        key: process.env.TRELLO_KEY,
+        secret: process.env.TRELLO_SECRET
+      }
+    });
 
+    const accessTokenParts = new URLSearchParams(response.data);
+    const accessToken = accessTokenParts.get("oauth_token");
+    res.send(`✅ Success! Your token: ${accessToken}. Save it in localStorage to use it.`);
+  } catch (err) {
+    res.status(500).send("Error getting access token");
+  }
+});
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
