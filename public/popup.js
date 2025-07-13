@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
       }
 
-      const res = await fetch("/copy-to-many", {
+      const res = await fetch("/api/copy-to-many", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sourceListId, targetListIds })
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
       }
 
-      const res = await fetch("/copy-to-new-lists", {
+      const res = await fetch("/api/copy-to-new-lists", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sourceListId, targetBoardIds })
