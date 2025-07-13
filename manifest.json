@@ -1,18 +1,27 @@
 {
-  "name": "Copy List Power-Up",
-  "capabilities": {
-    "board-buttons": {
-      "enabled": true,
-      "buttons": [
-        {
-          "text": "Copy List",
-          "callback": "showCopyListPopup"
-        }
-      ]
-    }
+  "manifest_version": 1,
+  "name": "Copy List to Multiple Boards",
+  "description": "Select a list and copy it to multiple boards at once. Supports tags, checklists, due dates, and more.",
+  "permissions": ["read", "write"],
+  "author": "Hunter Boze",
+  "version": "1.0.0",
+  "icons": {
+    "128": "imgs/icon@128.png"
   },
-  "connectors": {},
-  "authorization": {
-    "type": "none"
-  }
+  "iframeConnectorUrl": "https://copy-list-powerup.vercel.app",
+  "homepage": "https://copy-list-powerup.vercel.app",
+  "authorization-status": {
+    "enabled": true,
+    "url": "https://copy-list-powerup.vercel.app/authorize.html"
+  },
+  "show-authorization": {
+    "url": "https://copy-list-powerup.vercel.app/authorize.html"
+  },
+  "board-buttons": {
+    "url": "https://copy-list-powerup.vercel.app/client.js",
+    "capabilities": ["board-buttons"]
+  },
+  "valid-domains": [
+    "copy-list-powerup.vercel.app"
+  ]
 }

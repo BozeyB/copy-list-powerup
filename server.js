@@ -130,6 +130,10 @@ app.post("/copy-to-new-lists", async (req, res) => {
     res.status(500).send("Error copying to new lists.");
   }
 });
+app.get('/auth/callback', (req, res) => {
+  res.send('Authorization complete. You can close this window.');
+});
+
 
 // 🟩 Fetch all boards and lists
 app.get("/user-boards", async (req, res) => {
