@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   const targetListsDiv = document.getElementById("targetLists");
   const targetBoardsDiv = document.getElementById("targetBoards");
   const statusDiv = document.getElementById("status");
-
   const modeRadios = document.querySelectorAll("input[name='copyMode']");
 
+  // Toggle between copy modes
   modeRadios.forEach(radio => {
     radio.addEventListener("change", () => {
       const useExisting = radio.value === "existing";
@@ -16,21 +16,35 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   });
 
-  // ✅ Get source list options (from current board)
-  const sourceLists = await t.lists("id", "name");
-  sourceLists.forEach(list => {
-    const opt = document.createElement("option");
-    opt.value = list.id;
-    opt.textContent = list.name;
-    sourceListSelect.appendChild(opt);
-  });
- 
   try {
-    const res = await fetch(`https://copy-list-powerup.vercel.app/api/user-boards?apiKey=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_API_TOKEN}`);
+    // Fetch source lists from current board
+    const sourceLists = await t.lists("id", "name");
+    sourceLists.forEach(list => {
+      const opt = document.createElement("option");
+      opt.value = list.id;
+      opt.textContent = list.name;
+      sourceListSelect.appendChild(opt);
+    });
+
+    // Get API key and token from secure board settings (must be stored via t.set())
+    const apiKey = await t.get('board', 'shared', 'trelloApiKey');
+    const token = await t.get('board', 'shared', 'trelloToken');
+
+    if (!apiKey || !token) {
+      statusDiv.textContent = "Missing API key or token. Please configure the Power-Up.";
+      return;
+    }
+
+    // Fetch all boards/lists
+    const res = await fetch(`/api/user-boards?apiKey=${apiKey}&token=${token}`);
     const boards = await res.json();
 
+    if (!Array.isArray(boards)) {
+      throw new Error("Unexpected response");
+    }
+
     boards.forEach(board => {
-      // Existing Target Lists
+      // Display lists (existing)
       const boardLabel = document.createElement("h4");
       boardLabel.textContent = board.boardName;
       targetListsDiv.appendChild(boardLabel);
@@ -46,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         targetListsDiv.appendChild(label);
       });
 
-      // New List in Boards
+      // Display boards (for creating new lists)
       const boardBoxLabel = document.createElement("label");
       const boardCheckbox = document.createElement("input");
       boardCheckbox.type = "checkbox";
@@ -57,11 +71,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       targetBoardsDiv.appendChild(boardBoxLabel);
     });
   } catch (err) {
-    console.error("Error loading target boards/lists:", err);
+    console.error(err);
     statusDiv.textContent = "Could not load target boards/lists.";
   }
 
-  // Submit Copy Form
+  // Form submission logic
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     statusDiv.textContent = "Copying cards...";
