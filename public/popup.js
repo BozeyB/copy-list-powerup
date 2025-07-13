@@ -25,10 +25,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     sourceListSelect.appendChild(opt);
   });
 
-  // ✅ Replace these with your real Trello API Key and Token
-  const apiKey = "520e82365244fbc355d6b7941e1495b8";
-  const token = "ATTA4ed84d3f993570a022a535fae9beecc74f7c33e6662107176f5008c4d20162475017B9AC";
-
   try {
     const res = await fetch(`https://copy-list-powerup.vercel.app/api/user-boards?apiKey=${apiKey}&token=${token}`);
     const boards = await res.json();
