@@ -7,14 +7,16 @@
   <body>
     <p>Authorizing with Trello...</p>
     <script>
+      TrelloPowerUp.initialize({});
+
       window.TrelloPowerUp.authorize({
+        name: "Copy List to Multiple Boards",
         scope: {
           read: true,
           write: true
         },
-        expiration: 'never',
-        name: 'Copy List to Multiple Boards',
-        return_url: './close.html'
+        expiration: "never",
+        return_url: "https://copy-list-powerup.vercel.app/close.html"
       });
     </script>
   </body>
